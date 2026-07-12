@@ -34,6 +34,7 @@ export async function syncNow() {
                     title: op.data.title,
                     description: op.data.description ?? "",
                     status: op.data.status ?? "Pendiente",
+                    style: op.data.style,
                 });
             } else if (op.op === "update") {
                 // Para update y delete necesitamos el serverId, si no lo tenemos es que el create aún no se ha sincronizado, así que lo dejamos para la próxima vez
@@ -42,8 +43,9 @@ export async function syncNow() {
                     toSync.push({
                         clienteId: cid,
                         title: op.data.title,
-                        decription: op.data.description,
+                        description: op.data.description,
                         status: op.data.status,
+                        style: op.data.style,
                     });
                 } else if(op.serverId) {
                     try {
@@ -58,7 +60,7 @@ export async function syncNow() {
         if (toSync.length) {
             try {
                 const {data} = await api.post("/tasks/bulksync", { tasks: toSync });
-                for (const map of data?._maping || []) {
+                for (const map of data?.mapping || []) {
                     await setMapping(map.clienteId, map.serverId);
                     await promoteLocalToServer(map.clienteId, map.serverId);
                 }
