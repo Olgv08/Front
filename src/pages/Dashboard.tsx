@@ -852,8 +852,9 @@ export default function Dashboard() {
                     key={t._id}
                     style={{
                       display: "flex",
+                      flexWrap: "wrap",
                       alignItems: isEditing ? "stretch" : "flex-start",
-                      gap: "16px",
+                      gap: "12px 16px",
                       background: theme.taskBg,
                       color: taskDark ? "#f5f3ef" : "#1a1917",
                       borderRadius: radius,
@@ -886,7 +887,7 @@ export default function Dashboard() {
                       </button>
                     )}
 
-                    <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <div style={{ flex: "1 1 220px", minWidth: "220px", display: "flex", flexDirection: "column", gap: "8px" }}>
                       {isEditing ? (
                         <>
                           <input
@@ -1003,7 +1004,7 @@ export default function Dashboard() {
                     </div>
 
                     {!isEditing && (
-                      <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0, marginLeft: "auto" }}>
                         {theme.showStatusBadge && (
                           <select
                             value={t.status}
