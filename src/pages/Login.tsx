@@ -30,6 +30,7 @@ export default function Login() {
     try {
       const { data } = await api.post("/auth/login", { email, password });
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", data.user?.name ?? "");
       setAuth(data.token);
       nav("/dashboard");
     } catch (err: unknown) {
