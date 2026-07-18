@@ -8,13 +8,13 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Todo App',
-        short_name: 'todo',
+        name: 'TodoFlow',
+        short_name: 'TodoFlow',
         description: 'Organiza tus tareas de manera eficiente',
         start_url: './',
         display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#3f51b5',
+        background_color: '#F3F1EC',
+        theme_color: '#F3F1EC',
         icons: [
           {
             src: 'icons/icon192.png',
@@ -29,8 +29,8 @@ export default defineConfig({
         ],
         screenshots: [
           {
-            src: '/screenshots/captura2.png',
-            sizes: '1902x990',
+            src: '/screenshots/CapturaPantalla.png',
+            sizes: '1917x1030',
             type: 'image/png'
           }
         ],

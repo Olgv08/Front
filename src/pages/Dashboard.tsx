@@ -605,7 +605,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <h1 style={{ fontSize: "clamp(32px, 4vw, 44px)", fontWeight: 800, margin: 0, letterSpacing: "-1px" }}>My Tasks</h1>
+          <h1 style={{ fontSize: "clamp(32px, 4vw, 44px)", fontWeight: 800, margin: 0, letterSpacing: "-1px" }}>TodoFlow</h1>
 
           <div style={{ display: "flex", gap: "20px", marginTop: "10px", fontSize: "14px", color: "#57534e", flexWrap: "wrap" }}>
             <span><strong style={{ color: "#1a1917" }}>{stats.pending}</strong> pendientes</span>

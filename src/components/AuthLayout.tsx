@@ -32,7 +32,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: "12px" }}>
           <img src={logo} alt="Logo" style={{ width: "34px", height: "34px", objectFit: "contain" }} />
-          <span style={{ color: "#fff", fontWeight: 700, fontSize: "17px" }}>My Tasks</span>
+          <span style={{ color: "#fff", fontWeight: 700, fontSize: "17px" }}>TodoFlow</span>
         </div>
 
         <div style={{ position: "relative", zIndex: 1 }}>
@@ -83,7 +83,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         <div className="auth-mobile-logo" style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "36px" }}>
           <img src={logo} alt="Logo" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
-          <span style={{ fontWeight: 700, fontSize: "15px", color: "#1a1917" }}>My Tasks</span>
+          <span style={{ fontWeight: 700, fontSize: "15px", color: "#1a1917" }}>TodoFlow</span>
         </div>
 
         <div style={{ width: "100%", maxWidth: "400px" }}>{children}</div>
