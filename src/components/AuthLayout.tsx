@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
   const accent = theme.accentColor;
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", fontFamily: "'Onest', system-ui, sans-serif", background: "#F4F2EE" }}>
+    <div style={{ minHeight: "100vh", display: "flex", fontFamily: "'Onest', system-ui, sans-serif", background: "#F4F2EE", paddingTop: "env(safe-area-inset-top)" }}>
       {/* ===== Panel izquierdo decorativo (oculto en pantallas chicas) ===== */}
       <div
         className="auth-left"

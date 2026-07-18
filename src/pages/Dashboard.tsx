@@ -473,7 +473,7 @@ export default function Dashboard() {
   const statusMeta = getStatusMeta(theme.accentColor);
 
   return (
-    <div style={{ minHeight: "100vh", width: "100%", background: "#F3F1EC", fontFamily: "'Onest', system-ui, sans-serif", color: "#1a1917" }}>
+    <div style={{ minHeight: "100vh", width: "100%", background: "#F3F1EC", fontFamily: "'Onest', system-ui, sans-serif", color: "#1a1917", paddingTop: "env(safe-area-inset-top)" }}>
       <div style={{ marginRight: panelOpen ? "min(380px, 100vw)" : 0, transition: "margin-right 0.25s ease" }}>
         {/* ===== Header ===== */}
         <header
@@ -1062,6 +1062,8 @@ export default function Dashboard() {
           background: "#ffffff",
           borderLeft: "1px solid #eae5da",
           padding: "24px",
+          paddingTop: "calc(24px + env(safe-area-inset-top))",
+          paddingBottom: "calc(24px + env(safe-area-inset-bottom))",
           overflowY: "auto",
           zIndex: 200,
           transition: "right 0.25s ease",
