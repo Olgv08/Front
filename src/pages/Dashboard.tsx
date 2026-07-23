@@ -32,7 +32,6 @@ type TaskStyle = {
   bold: boolean;
   italic: boolean;
   underline: boolean;
-  bgColor: string; // "" = usar el fondo del tema general
 };
 
 type Task = {
@@ -70,17 +69,13 @@ const DEFAULT_TASK_STYLE: TaskStyle = {
   bold: false,
   italic: false,
   underline: false,
-  bgColor: "",
 };
 
-// Paleta de fondos que el usuario puede elegir para UNA tarea en particular (independiente del tema general)
-const TASK_BG_SWATCHES: string[] = ["#FDFCFA", "#FFF7E8", "#EAF6EF", "#EAF1FB", "#FCEAF1", "#2A2826"];
-
 const QUICK_THEMES: { name: string; style: TaskStyle }[] = [
-  { name: "Consola", style: { fontFamily: FONT_OPTIONS[1].value, color: "#0f9d58", fontSize: "md", bold: false, italic: false, underline: false, bgColor: "" } },
-  { name: "Elegante", style: { fontFamily: FONT_OPTIONS[4].value, color: "#7c3aed", fontSize: "lg", bold: false, italic: true, underline: false, bgColor: "" } },
-  { name: "Urgente", style: { fontFamily: FONT_OPTIONS[0].value, color: "#dc2626", fontSize: "lg", bold: true, italic: false, underline: true, bgColor: "" } },
-  { name: "Código", style: { fontFamily: FONT_OPTIONS[3].value, color: "#0369a1", fontSize: "sm", bold: false, italic: false, underline: false, bgColor: "" } },
+  { name: "Consola", style: { fontFamily: FONT_OPTIONS[1].value, color: "#0f9d58", fontSize: "md", bold: false, italic: false, underline: false } },
+  { name: "Elegante", style: { fontFamily: FONT_OPTIONS[4].value, color: "#7c3aed", fontSize: "lg", bold: false, italic: true, underline: false } },
+  { name: "Urgente", style: { fontFamily: FONT_OPTIONS[0].value, color: "#dc2626", fontSize: "lg", bold: true, italic: false, underline: true } },
+  { name: "Código", style: { fontFamily: FONT_OPTIONS[3].value, color: "#0369a1", fontSize: "sm", bold: false, italic: false, underline: false } },
 ];
 
 function normalizeStyle(x: any): TaskStyle {
@@ -92,7 +87,6 @@ function normalizeStyle(x: any): TaskStyle {
     bold: !!x.bold,
     italic: !!x.italic,
     underline: !!x.underline,
-    bgColor: typeof x.bgColor === "string" ? x.bgColor : "",
   };
 }
 
@@ -297,6 +291,10 @@ export default function Dashboard() {
       setFormError("El título es muy largo (máximo 120 caracteres).");
       return;
     }
+    if (!d) {
+      setFormError("Agrega una descripción para la tarea antes de guardarla.");
+      return;
+    }
     setFormError("");
 
     const clienteId = crypto.randomUUID();
@@ -363,6 +361,10 @@ export default function Dashboard() {
     }
     if (newTitle.length > 120) {
       setEditError("El título es muy largo (máximo 120 caracteres).");
+      return;
+    }
+    if (!newDesc) {
+      setEditError("Agrega una descripción para la tarea antes de guardarla.");
       return;
     }
     setEditError("");
@@ -704,13 +706,13 @@ export default function Dashboard() {
                 }}
                 placeholder="Título de la tarea…"
                 style={{
-                  border: formError ? "1.5px solid #dc2626" : "none",
+                  border: formError && !title.trim() ? "1.5px solid #dc2626" : "none",
                   outline: "none",
                   fontSize: "18px",
                   fontWeight: 600,
                   padding: "4px 0",
-                  borderRadius: formError ? "6px" : 0,
-                  paddingLeft: formError ? "8px" : 0,
+                  borderRadius: formError && !title.trim() ? "6px" : 0,
+                  paddingLeft: formError && !title.trim() ? "8px" : 0,
                 }}
               />
               {formError && (
@@ -720,10 +722,23 @@ export default function Dashboard() {
               )}
               <textarea
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Agrega una descripción (opcional)…"
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                  if (formError) setFormError("");
+                }}
+                placeholder="Agrega una descripción…"
                 rows={2}
-                style={{ border: "none", outline: "none", resize: "vertical", fontSize: "14px", color: "#57534e", padding: "4px 0", fontFamily: "inherit" }}
+                style={{
+                  border: formError && !description.trim() ? "1.5px solid #dc2626" : "none",
+                  outline: "none",
+                  resize: "vertical",
+                  fontSize: "14px",
+                  color: "#57534e",
+                  padding: "4px 0",
+                  fontFamily: "inherit",
+                  borderRadius: formError && !description.trim() ? "6px" : 0,
+                  paddingLeft: formError && !description.trim() ? "8px" : 0,
+                }}
               />
 
               {/* Personalización de ESTA tarea */}
@@ -809,46 +824,6 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                  <label style={{ fontSize: "11px", color: "#8a8578", fontWeight: 600 }}>FONDO DE LA TARJETA</label>
-                  <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-                    <button
-                      type="button"
-                      onClick={() => setNewTaskStyle((s) => ({ ...s, bgColor: "" }))}
-                      title="Usar el fondo del tema general"
-                      style={{
-                        width: "26px",
-                        height: "26px",
-                        borderRadius: "50%",
-                        border: `2px solid ${!newTaskStyle.bgColor ? "#1a1917" : "#e5e0d5"}`,
-                        background: `linear-gradient(135deg, ${theme.taskBg} 50%, #ffffff00 50%)`,
-                        cursor: "pointer",
-                      }}
-                    />
-                    {TASK_BG_SWATCHES.map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => setNewTaskStyle((s) => ({ ...s, bgColor: c }))}
-                        style={{
-                          width: "26px",
-                          height: "26px",
-                          borderRadius: "50%",
-                          border: `2px solid ${newTaskStyle.bgColor === c ? "#1a1917" : "#e5e0d5"}`,
-                          background: c,
-                          cursor: "pointer",
-                        }}
-                      />
-                    ))}
-                    <input
-                      type="color"
-                      value={newTaskStyle.bgColor || "#ffffff"}
-                      onChange={(e) => setNewTaskStyle((s) => ({ ...s, bgColor: e.target.value }))}
-                      style={{ width: "26px", height: "26px", padding: 0, borderRadius: "50%", border: "1px solid #e5e0d5", cursor: "pointer" }}
-                    />
-                  </div>
-                </div>
-
                 <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
                   {QUICK_THEMES.map((qt) => (
                     <button
@@ -877,7 +852,7 @@ export default function Dashboard() {
                     style={{
                       padding: "8px 14px",
                       borderRadius: "8px",
-                      background: newTaskStyle.bgColor || "#ffffff",
+                      background: "#ffffff",
                       border: "1px solid #e5e0d5",
                       fontFamily: newTaskStyle.fontFamily,
                       color: newTaskStyle.color,
@@ -976,8 +951,6 @@ export default function Dashboard() {
               {filtered.map((t) => {
                 const meta = statusMeta[t.status];
                 const isEditing = editingId === t._id;
-                const cardBg = t.style?.bgColor || theme.taskBg;
-                const cardDark = isDark(cardBg);
                 return (
                   <li
                     key={t._id}
@@ -986,8 +959,8 @@ export default function Dashboard() {
                       flexWrap: "wrap",
                       alignItems: isEditing ? "stretch" : "flex-start",
                       gap: "12px 16px",
-                      background: cardBg,
-                      color: cardDark ? "#f5f3ef" : "#1a1917",
+                      background: theme.taskBg,
+                      color: taskDark ? "#f5f3ef" : "#1a1917",
                       borderRadius: radius,
                       padding: theme.compact ? "14px 18px" : "22px 26px",
                       borderLeft: `4px solid ${meta.color}`,
@@ -1003,7 +976,7 @@ export default function Dashboard() {
                           width: "26px",
                           height: "26px",
                           borderRadius: "50%",
-                          border: `2px solid ${t.status === "Completada" ? meta.color : (cardDark ? "#ffffff55" : "#00000033")}`,
+                          border: `2px solid ${t.status === "Completada" ? meta.color : (taskDark ? "#ffffff55" : "#00000033")}`,
                           background: t.status === "Completada" ? meta.color : "transparent",
                           color: "#ffffff",
                           display: "flex",
@@ -1029,7 +1002,7 @@ export default function Dashboard() {
                               if (editError) setEditError("");
                             }}
                             placeholder="Título"
-                            style={{ padding: "10px 14px", borderRadius: "8px", border: `1px solid ${editError ? "#dc2626" : theme.accentColor}`, fontSize: "16px", width: "100%", boxSizing: "border-box" }}
+                            style={{ padding: "10px 14px", borderRadius: "8px", border: `1px solid ${editError && !editingTitle.trim() ? "#dc2626" : theme.accentColor}`, fontSize: "16px", width: "100%", boxSizing: "border-box" }}
                           />
                           {editError && (
                             <div style={{ background: "#dc262614", color: "#dc2626", padding: "8px 12px", borderRadius: "8px", fontSize: "13px" }}>
@@ -1038,10 +1011,13 @@ export default function Dashboard() {
                           )}
                           <textarea
                             value={editingDescription}
-                            onChange={(e) => setEditingDescription(e.target.value)}
+                            onChange={(e) => {
+                              setEditingDescription(e.target.value);
+                              if (editError) setEditError("");
+                            }}
                             placeholder="Descripción"
                             rows={2}
-                            style={{ padding: "10px 14px", borderRadius: "8px", border: `1px solid ${theme.accentColor}`, fontSize: "14px", resize: "vertical", width: "100%", boxSizing: "border-box" }}
+                            style={{ padding: "10px 14px", borderRadius: "8px", border: `1px solid ${editError && !editingDescription.trim() ? "#dc2626" : theme.accentColor}`, fontSize: "14px", resize: "vertical", width: "100%", boxSizing: "border-box" }}
                           />
 
                           <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "flex-end", padding: "10px", borderRadius: "8px", border: `1px dashed ${theme.accentColor}` }}>
@@ -1111,39 +1087,6 @@ export default function Dashboard() {
                                 ))}
                               </div>
                             </div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                              <label style={{ fontSize: "10px", color: "#8a8578" }}>Fondo</label>
-                              <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
-                                <button
-                                  type="button"
-                                  onClick={() => setEditingStyle((s) => ({ ...s, bgColor: "" }))}
-                                  title="Usar el fondo del tema general"
-                                  style={{
-                                    width: "22px",
-                                    height: "22px",
-                                    borderRadius: "50%",
-                                    border: `2px solid ${!editingStyle.bgColor ? "#1a1917" : "#cbd5e1"}`,
-                                    background: `linear-gradient(135deg, ${theme.taskBg} 50%, #ffffff00 50%)`,
-                                    cursor: "pointer",
-                                  }}
-                                />
-                                {TASK_BG_SWATCHES.map((c) => (
-                                  <button
-                                    key={c}
-                                    type="button"
-                                    onClick={() => setEditingStyle((s) => ({ ...s, bgColor: c }))}
-                                    style={{
-                                      width: "22px",
-                                      height: "22px",
-                                      borderRadius: "50%",
-                                      border: `2px solid ${editingStyle.bgColor === c ? "#1a1917" : "#cbd5e1"}`,
-                                      background: c,
-                                      cursor: "pointer",
-                                    }}
-                                  />
-                                ))}
-                              </div>
-                            </div>
                             <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
                               {QUICK_THEMES.map((qt) => (
                                 <button
@@ -1176,7 +1119,7 @@ export default function Dashboard() {
                               fontSize: FONT_SIZE_PX[t.style?.fontSize ?? "md"],
                               fontWeight: t.style?.bold ? 800 : 600,
                               fontStyle: t.style?.italic ? "italic" : "normal",
-                              color: t.status === "Completada" ? (cardDark ? "#ffffff77" : "#00000066") : t.style?.color ?? DEFAULT_TASK_STYLE.color,
+                              color: t.status === "Completada" ? (taskDark ? "#ffffff77" : "#00000066") : t.style?.color ?? DEFAULT_TASK_STYLE.color,
                               textDecoration: [
                                 t.status === "Completada" ? "line-through" : "",
                                 t.style?.underline ? "underline" : "",
@@ -1193,7 +1136,10 @@ export default function Dashboard() {
                                 margin: 0,
                                 fontFamily: t.style?.fontFamily ?? DEFAULT_TASK_STYLE.fontFamily,
                                 fontSize: "14px",
-                                color: cardDark ? "#f5f3efaa" : "#57534e",
+                                fontWeight: t.style?.bold ? 700 : 400,
+                                fontStyle: t.style?.italic ? "italic" : "normal",
+                                textDecoration: t.style?.underline ? "underline" : "none",
+                                color: taskDark ? "#f5f3efaa" : "#57534e",
                                 lineHeight: 1.5,
                                 overflowWrap: "break-word",
                               }}
@@ -1237,14 +1183,14 @@ export default function Dashboard() {
                         <button
                           onClick={() => startEdit(t)}
                           title="Editar"
-                          style={{ background: "none", border: `1px solid ${cardDark ? "#ffffff33" : "#00000022"}`, padding: "8px 10px", borderRadius: "8px", cursor: "pointer", fontSize: "14px" }}
+                          style={{ background: "none", border: `1px solid ${taskDark ? "#ffffff33" : "#00000022"}`, padding: "8px 10px", borderRadius: "8px", cursor: "pointer", fontSize: "14px" }}
                         >
                           ✏️
                         </button>
                         <button
                           onClick={() => removeTask(t._id)}
                           title="Eliminar"
-                          style={{ background: "none", border: `1px solid ${cardDark ? "#ffffff33" : "#00000022"}`, padding: "8px 10px", borderRadius: "8px", cursor: "pointer", fontSize: "14px" }}
+                          style={{ background: "none", border: `1px solid ${taskDark ? "#ffffff33" : "#00000022"}`, padding: "8px 10px", borderRadius: "8px", cursor: "pointer", fontSize: "14px" }}
                         >
                           🗑️
                         </button>
